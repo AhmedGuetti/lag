@@ -1,51 +1,57 @@
+#include "gmatrix.h"
 #include <iostream>
-#include "./gmatrix.h"
+#include <vector>
+#include <cassert>
 
 int main() {
-    try {
-        // Create matrices
-        int data1[] = {1, 2, 3, 4, 5, 6};
-        int data2[] = {7, 8, 9, 10, 11, 12};
+    gmatrix<int> mat(3, 3);
+    mat.fill(1);
+    assert(mat.get(1, 1) == 1);
 
-        // Matrix A (2x3)
-        gmatrix<int> mat1(2, 3, data1);
+    mat.set(1, 1, 42);
+    assert(mat.get(1, 1) == 42);
 
-        // Matrix B (3x2)
-        gmatrix<int> mat2(3, 2, data2);
+    std::vector<int> row = mat.row(1);
+    assert(row[1] == 42);
 
-        // Perform Matrix Multiplication
-        gmatrix<int> result = mat1 * mat2;
 
-        // Print Matrix A
-        std::cout << "Matrix A (2x3):" << std::endl;
-        for (int i = 0; i < mat1.rows(); ++i) {
-            for (int j = 0; j < mat1.cols(); ++j) {
-                std::cout << mat1.get(i, j) << " ";
-            }
-            std::cout << std::endl;
-        }
 
-        // Print Matrix B
-        std::cout << "Matrix B (3x2):" << std::endl;
-        for (int i = 0; i < mat2.rows(); ++i) {
-            for (int j = 0; j < mat2.cols(); ++j) {
-                std::cout << mat2.get(i, j) << " ";
-            }
-            std::cout << std::endl;
-        }
+    // for (int i = 0; i < 3; i++){
+    //     for (int j = 0; j < 3; j++)
+    //         std::cout << mat.get(i,j) << "\t";
+       
+    //     std::cout<<std::endl;
+    // }
+    
+    mat.delRow(1);
 
-        // Print Result Matrix
-        std::cout << "Result Matrix (2x2):" << std::endl;
-        for (int i = 0; i < result.rows(); ++i) {
-            for (int j = 0; j < result.cols(); ++j) {
-                std::cout << result.get(i, j) << " ";
-            }
-            std::cout << std::endl;
-        }
+    
+    // for (int i = 0; i < 2; i++){
+    //     for (int j = 0; j < 3; j++)
+    //         std::cout << mat.get(i,j) << "\t";
+    //     std::cout<<std::endl;
+    // }
+    
+    assert(mat.rows() == 2);
 
-    } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
-    }
+    mat.delCol(1);
+    assert(mat.cols() == 2);
 
+    gmatrix<int> mat2(2, 2);
+    mat2.fill(5);
+    gmatrix<int> sum = mat + mat2;
+    assert(sum.get(0, 0) == 6);
+
+    gmatrix<int> diff = mat2 - mat;
+    assert(diff.get(0, 0) == 4);
+
+    gmatrix<int> mat3(2, 3);
+    gmatrix<int> mat4(3, 2);
+    mat3.fill(1);
+    mat4.fill(2);
+    gmatrix<int> product = mat3 * mat4;
+    assert(product.rows() == 2 && product.cols() == 2);
+
+    std::cout << "All tests passed!" << std::endl;
     return 0;
 }
