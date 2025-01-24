@@ -114,7 +114,7 @@ int main() {
 
 
 
-        // Test 1: Constructor and Output
+    // Test 1: Constructor and Output
     gcomplex<double> c1(3.0, 4.0); // 3 + 4i
     gcomplex<double> c2(1.0, 2.0); // 1 + 2i
     std::cout << "c1: " << c1 << std::endl;
@@ -174,5 +174,59 @@ int main() {
     } catch (const std::exception& e) {
         std::cout << "Error during division by zero: " << e.what() << std::endl;
     }
+
+
+
+
+        // Create complex numbers
+    gcomplex<double> z1(1, 2);  // 1 + 2i
+    gcomplex<double> z2(3, 4);  // 3 + 4i
+
+    std::cout << "Test Complex Numbers:" << std::endl;
+    std::cout << "z1 = " << z1 << std::endl;
+    std::cout << "z2 = " << z2 << std::endl;
+
+    // Test addition, subtraction, multiplication, and division
+    gcomplex<double> add_result = z1 + z2;
+    gcomplex<double> sub_result = z1 - z2;
+    gcomplex<double> mul_result = z1 * z2;
+    gcomplex<double> div_result = z1 / z2;
+
+    std::cout << "\nArithmetic operations:" << std::endl;
+    std::cout << "z1 + z2 = " << add_result << std::endl;
+    std::cout << "z1 - z2 = " << sub_result << std::endl;
+    std::cout << "z1 * z2 = " << mul_result << std::endl;
+    std::cout << "z1 / z2 = " << div_result << std::endl;
+
+    // Test magnitude and argument (angle)
+    std::cout << "\nMagnitude and argument:" << std::endl;
+    std::cout << "Magnitude of z1 = " << z1.magnitude() << std::endl;
+    std::cout << "Argument of z1 = " << z1.argument() << " radians" << std::endl;
+
+    // Test trigonometric and exponential functions
+    std::cout << "\nTrigonometric and exponential functions:" << std::endl;
+    std::cout << "sin(z1) = " << z1.sin() << std::endl;
+    std::cout << "cos(z1) = " << z1.cos() << std::endl;
+    std::cout << "exp(z1) = " << z1.exp() << std::endl;
+
+    // Test powers and logarithms
+    std::cout << "\nPowers and logarithms:" << std::endl;
+    std::cout << "z1^2 = " << z1.power(2) << std::endl;
+    std::cout << "log(z1) = " << z1.log() << std::endl;
+
+    // Test the conjugate function
+    std::cout << "\nConjugate of z1 = " << z1.conjugate() << std::endl;
+
+    // Test the square root
+    std::cout << "\nSquare root of z1 = " << z1.sqrt() << std::endl;
+
+    // Check assignment operator
+    gcomplex<double> z3 = z1;
+    std::cout << "\nAfter assigning z1 to z3: z3 = " << z3 << std::endl;
+
+    // Check equality and inequality
+    std::cout << "\nEquality and Inequality:" << std::endl;
+    std::cout << "z1 == z3: " << (z1 == z3 ? "True" : "False") << std::endl;
+    std::cout << "z1 != z2: " << (z1 != z2 ? "True" : "False") << std::endl;
     return 0;
 }
