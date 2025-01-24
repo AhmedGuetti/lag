@@ -1,2 +1,50 @@
-./a.out
-./.vscode
+# Ignore build directories
+/build/
+/bin/
+/obj/
+/CMakeFiles/
+/CMakeCache.txt
+/Debian/
+/Makefile
+*.out
+*.exe
+*.o
+*.a
+*.lo
+*.la
+*.dll
+*.dylib
+*.so
+*.swp
+
+# Ignore IDE-specific files
+/.vscode/
+/.idea/
+/*.pro.user
+*.user
+*.userosscache
+*.workspace
+
+# Ignore temporary files
+*~
+*.tmp
+*.log
+*.bak
+*.swp
+*.swo
+
+# Ignore compiled binaries
+*.exe
+*.out
+*.app
+*.dll
+*.dylib
+*.so
+
+# Ignore test and coverage directories
+/test/
+/coverage/
+
+# Ignore dependency directories
+/deps/
+
