@@ -70,23 +70,61 @@ public:
      * @return return the element in the position (nRow, nCol)
     */
     T get(int nRow, int nCol) const;
+
+    /**
+     * @return the number of rows in the matrix
+    */
     int rows() const;
+
+    /**
+     * @return the number of columns in the matrix
+    */
     int cols() const;
+
+    /** the size of a matrix is the number of element inside of it
+     * @return the size of the matrix
+    */
     int size() const;
 
+
+    /** Data is the matrix holding the acctual serialised version of the array
+     * @return the data array of a matrix 
+    */
     inline T*       data();
+    
+    /** Data is the matrix holding the acctual serialised version of the array
+     * @return the data array of a matrix 
+    */
     inline const T* data() const;
     
+    /** Copying the data from one matrix to another with different data type 
+     * @param src the matrix we want to copy from
+     * @param dst the matrix we want to copy to
+    */
     template <class U>
     static void copyMat(const gmatrix<T>& src, gmatrix<U>& dst);
 
+    /** Copying the data from one matrix to another with the same data type 
+     * @param src the matrix we want to copy from
+     * @param dst the matrix we want to copy to
+    */
     static void copyMat(const gmatrix<T>& src, gmatrix<T>& dst);
 
+    /** Copying the data from a vector to a matrix
+     * @param src the vector we want to copy from
+     * @param dst the matrix we want to copy to
+    */
     static void copyVec(std::vector<T>& vec, const gmatrix<T>& mat);
     
+    /**Allocate space for n number of element in the matrix where 
+     * n is the size of the matrix that can be found 
+    */
     void allocate();
 
-    void release() ;
+    /**Delete the table holding the data and free the resources 
+    */
+    void release();
+
     /**
      * Set the element in the (nRow, nCol) to the value given.
      * @param nRow number of the row
@@ -125,8 +163,64 @@ public:
     /**
      * Remove the c th row
      * @param c Index of column to remove.
-     */
+    */
     void delCol(int c);
+
+    /**
+     * Print the n first number of rows and by default if noting is passed 5
+     * will be the default value 
+    */
+    void head(int r = 5);
+
+    /**
+     * Print the n last number of rows and by default if noting is passed 5
+     * will be the default value 
+    */
+    void tail(int r = 5);
+
+    /**
+     * Print element in the cell (i, j)
+     * @param row the row index
+     * @param col the column index 
+    */
+    void view(int row, int col);
+
+    /**
+     * Print a sub matrix starting from the cell (start_row, start_col)
+     * to the cell (end_row, end_col)
+     * @param start_row the starting position on the row index
+     * @param end_row the end position on the row index
+     * @param start_col the starting position on the column index
+     * @param end_col the end position on the column index
+    */
+    void view(int start_row, int end_row, int start_col, int end_col);
+
+
+    /**
+     * Slice the matric to get a sub matrix starting from the cell 
+     * (start_row, start_col) to the cell (end_row, end_col)
+     * @param start_row the starting position on the row index
+     * @param end_row the end position on the row index
+     * @param start_col the starting position on the column index
+     * @param end_col the end position on the column index
+     * @note the matrix is not changed
+    */
+    gmatrix<T>& slice(int start_row, int end_row, int start_col, int end_col);
+
+    /**
+     * Transpose the matrix
+     * @return the transposed matrix
+     * @note the matrix is not changed
+    */
+    gmatrix<T>& transpose();
+
+    /**
+     * Printing operator overrloading for matricies 
+     * @param os outout stream
+     * @param matrix the matrix 
+     * @return a reference to the output stream
+    */
+    friend std::ostream &operator<<(std::ostream &os, const gmatrix<T> &matrix);
 
     /**
      * Asignment operator: overwrite content of this matrix.
@@ -223,6 +317,9 @@ public:
     template <class U>
     friend gmatrix<U> operator*(const gmatrix<U>& lhs, const U& rhs);
 
+
+
+    
 private:
     T* gmatrix_data;
     int rows_, cols_, size_;
@@ -286,6 +383,11 @@ void gmatrix<T>::copyMat(const gmatrix<T>& src, gmatrix<T>& dst){
 
 template <class T>
 void gmatrix<T>::copyVec(std::vector<T>& vec, const gmatrix<T>& mat){
+    if (vec.size() != mat.rows()){
+        std::cout << "Error in copyVec" << std::end;
+        // Needs work on error handling
+        return;
+    }    
     std::copy(vec.begin(), vec.end(), mat);
 }
 
@@ -414,6 +516,87 @@ void gmatrix<T>::delCol(int c) {
     gmatrix_data = new_data;
 }
 
+
+template <class T>
+void gmatrix<T>::head(int r) {
+    int row = rows_() < r ? rows_() : r;
+    for (int i = 0; i < row; i++) {
+        for (int j = 0; j < cols_; j++)
+            std::cout << this.get(i, j) << "\t";
+        std::cout << std::endl;
+    }
+}
+
+template <class T>
+void gmatrix<T>::tail(int r) {
+    int row = rows_() < r ? rows_() : r;
+    for (int i = rows_() - row; i < rows_(); i++) {
+        for (int j = 0; j < cols_; j++)
+            std::cout << this->get(i, j) << "\t";
+        std::cout << std::endl;
+    }
+}
+
+template <class T>
+void gmatrix<T>::view(int row, int col){
+    std::cout << this->get(row, col) << std::endl;
+}
+
+template <class T>
+void gmatrix<T>::view(int start_row, int end_row, int start_col, int end_col) {
+    if (start_row < 0 || 
+        start_col < 0 || 
+        end_row > this->rows() || 
+        end_col > this->cols() || 
+        start_row >= end_row || 
+        start_col >= end_col) {
+        throw std::out_of_range("The slicing parameters are out of bounds of the matrix size.");
+    }
+
+    for (int i = start_row; i < end_row; i++) {
+        for (int j = start_col; j < end_col; j++) {
+            std::cout << this->get(i, j) << "\t";
+        }
+        std::cout << std::endl;
+    }
+}
+
+template <class T>
+gmatrix<T>& gmatrix<T>::slice(int start_row, int end_row, int start_col, int end_col){
+    if (start_row < 0 || 
+        start_col < 0 || 
+        end_row > this->rows() || 
+        end_col > this->cols() || 
+        start_row >= end_row || 
+        start_col >= end_col) {
+            throw std::out_of_range("The slicing parameters are out of bounds of the matrix size.");
+    }
+    
+    gmatrix<T> mat(end_row - start_row, end_col - start_col);
+
+    for (int i = start_row; i < end_row; i++) {
+        for (int j = start_col; j < end_col; j++) {
+            mat.set(i - start_row, j - start_col, this->get(i, j));
+        }
+    }
+    return mat;
+}
+
+template <class T>
+gmatrix<T>& gmatrix<T>::transpose(){
+    gmatrix<T> mat(this->cols(), this->rows());
+
+    for (int i = 0; i < this->cols(); i++) {
+        for (int j = 0; j < this->rows(); j++) {
+            mat.set(i, j, this->get(j, i));
+        }
+    }
+    return mat;
+}
+
+
+
+
 template <class T>
 int gmatrix<T>::rows() const {return rows_;}
 
@@ -430,7 +613,16 @@ inline const T* gmatrix<T>::data() const{ return gmatrix_data;}
 
 
 
-
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const gmatrix<T>& matrix) {
+    for (int i = 0; i < matrix.rows_; ++i) {
+        for (int j = 0; j < matrix.cols_; ++j) {
+            os << matrix.get(i, j) << ' ';
+        }
+        os << '\n';
+    }
+    return os;
+}
 
 template <class T>
 gmatrix<T>& gmatrix<T>::operator=(const gmatrix<T>& mat){
@@ -513,5 +705,6 @@ gmatrix<U> operator*(const gmatrix<U>& lhs, const gmatrix<U>& rhs) {
     }
     return result;
 }
+
 
 #endif // GMATRIX_H_
